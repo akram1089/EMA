@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Create Employee</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container mt-5 mb-5">
+   <div class="main_title d-flex justify-content-between">
+    <h2>Create Employee</h2>
+<a href=" {% url 'all_emp' %}">    <button class="btn btn-primary">All Employee</button></a>
+   </div>
+    <form id="employee-form">
+        <!-- Employee Fields -->
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="age">Age:</label>
+            <input type="number" class="form-control" id="age" name="age" required>
+        </div>
+        <div class="form-group">
+            <label for="gender">Gender:</label>
+            <select class="form-control" id="gender" name="gender" required>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="phoneNo">Phone Number:</label>
+            <input type="text" class="form-control" id="phoneNo" name="phoneNo" required>
+        </div>
+
+        <!-- Address Fields -->
+        <h4>Address Details</h4>
+        <div class="form-group">
+            <label for="hno">House No:</label>
+            <input type="text" class="form-control" id="hno" name="hno" required>
+        </div>
+        <div class="form-group">
+            <label for="street">Street:</label>
+            <input type="text" class="form-control" id="street" name="street" required>
+        </div>
+        <div class="form-group">
+            <label for="city">City:</label>
+            <input type="text" class="form-control" id="city" name="city" required>
+        </div>
+        <div class="form-group">
+            <label for="state">State:</label>
+            <input type="text" class="form-control" id="state" name="state" required>
+        </div>
+
+        <!-- Work Experience Fields -->
+        <h4>Work Experience</h4>
+        <div id="work-experience-container">
+            <div class="work-experience">
+                <div class="form-group">
+                    <label for="companyName">Company Name:</label>
+                    <input type="text" class="form-control" name="companyName" required>
+                </div>
+                <div class="form-group">
+                    <label for="fromDate">From Date:</label>
+                    <input type="date" class="form-control" name="fromDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="toDate">To Date:</label>
+                    <input type="date" class="form-control" name="toDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <input type="text" class="form-control" name="address" required>
+                </div>
+                <button type="button" class="btn btn-danger remove-work-experience">Remove</button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary" id="add-work-experience">Add Work Experience</button>
+
+        <!-- Qualification Fields -->
+        <h4>Qualifications</h4>
+        <div id="qualification-container">
+            <div class="qualification">
+                <div class="form-group">
+                    <label for="qualificationName">Qualification Name:</label>
+                    <input type="text" class="form-control" name="qualificationName" required>
+                </div>
+                <div class="form-group">
+                    <label for="percentage">Percentage:</label>
+                    <input type="number" class="form-control" name="percentage" required>
+                </div>
+                <button type="button" class="btn btn-danger remove-qualification">Remove</button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary" id="add-qualification">Add Qualification</button>
+
+        <!-- Project Fields -->
+        <h4>Projects</h4>
+        <div id="project-container">
+            <div class="project">
+                <div class="form-group">
+                    <label for="title">Project Title:</label>
+                    <input type="text" class="form-control" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Project Description:</label>
+                    <textarea class="form-control" name="description" required></textarea>
+                </div>
+          
+                <button type="button" class="btn btn-danger remove-project">Remove</button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary" id="add-project">Add Project</button>
+
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Add work experience field
+        $('#add-work-experience').click(function () {
+            $('#work-experience-container').append(`
+                <div class="work-experience">
+                    <div class="form-group">
+                        <label for="companyName">Company Name:</label>
+                        <input type="text" class="form-control" name="companyName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fromDate">From Date:</label>
+                        <input type="date" class="form-control" name="fromDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="toDate">To Date:</label>
+                        <input type="date" class="form-control" name="toDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <input type="text" class="form-control" name="address" required>
+                    </div>
+                    <button type="button" class="btn btn-danger remove-work-experience">Remove</button>
+                </div>
+            `);
+        });
+
+        // Add qualification field
+        $('#add-qualification').click(function () {
+            $('#qualification-container').append(`
+                <div class="qualification">
+                    <div class="form-group">
+                        <label for="qualificationName">Qualification Name:</label>
+                        <input type="text" class="form-control" name="qualificationName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="percentage">Percentage:</label>
+                        <input type="number" class="form-control" name="percentage" required>
+                    </div>
+                    <button type="button" class="btn btn-danger remove-qualification">Remove</button>
+                </div>
+            `);
+        });
+
+        // Add project field
+        $('#add-project').click(function () {
+            $('#project-container').append(`
+                <div class="project">
+                    <div class="form-group">
+                        <label for="title">Project Title:</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Project Description:</label>
+                        <textarea class="form-control" name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="photo">Project Photo:</label>
+                        <input type="file" class="form-control" name="photo">
+                    </div>
+                    <button type="button" class="btn btn-danger remove-project">Remove</button>
+                </div>
+            `);
+        });
+
+        // Remove work experience field
+        $(document).on('click', '.remove-work-experience', function () {
+            $(this).closest('.work-experience').remove();
+        });
+
+        // Remove qualification field
+        $(document).on('click', '.remove-qualification', function () {
+            $(this).closest('.qualification').remove();
+        });
+
+        // Remove project field
+        $(document).on('click', '.remove-project', function () {
+            $(this).closest('.project').remove();
+        });
+
+// Handle form submission
+$('#employee-form').on('submit', function (event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    // Construct the data in the desired format
+    const data = {
+        name: $('input[name="name"]').val(),
+        email: $('input[name="email"]').val(),
+        age: $('input[name="age"]').val(),
+        gender: $('select[name="gender"]').val(),
+        phoneNo: $('input[name="phoneNo"]').val(),
+        addressDetails: {
+            hno: $('input[name="hno"]').val(),
+            street: $('input[name="street"]').val(),
+            city: $('input[name="city"]').val(),
+            state: $('input[name="state"]').val(),
+        },
+        work_experiences: [], // Ensure correct naming
+        qualifications: [], // Ensure correct naming
+        projects: [] // Ensure correct naming
+    };
+
+    // Collect Work Experience
+    $('#work-experience-container .work-experience').each(function () {
+        const workExp = {
+            companyName: $(this).find('input[name="companyName"]').val(),
+            fromDate: $(this).find('input[name="fromDate"]').val(),
+            toDate: $(this).find('input[name="toDate"]').val(),
+            address: $(this).find('input[name="address"]').val(),
+        };
+        data.work_experiences.push(workExp);
+    });
+
+    // Collect Qualifications
+    $('#qualification-container .qualification').each(function () {
+        const qualification = {
+            qualificationName: $(this).find('input[name="qualificationName"]').val(),
+            percentage: $(this).find('input[name="percentage"]').val(),
+        };
+        data.qualifications.push(qualification);
+    });
+
+    // Collect Projects
+    $('#project-container .project').each(function () {
+        const fileInput = $(this).find('input[name="photo"]')[0];
+        const project = {
+            title: $(this).find('input[name="title"]').val(),
+            description: $(this).find('textarea[name="description"]').val(),
+            photo: null, // Attach the file directly or null if not provided
+        };
+        data.projects.push(project);
+    });
+
+    console.log('Data being sent:', data); // Check the structure being sent
+
+    // Send AJAX request
+    $.ajax({
+        url: '/api/employees/', // Update with your endpoint
+        type: 'POST',
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function (response) {
+            alert('Employee created successfully!');
+            $('#employee-form')[0].reset(); // Reset the form
+        },
+        error: function (error) {
+            console.error('Error:', error);
+            alert('Failed to create employee. Please try again.');
+        }
+    });
+});
+
+   
+   
+   });
+</script>
+</body>
+</html>
