@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Bundle with Popper (includes Bootstrap's JavaScript components) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <title>Create Employee</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body class="container my-3">
+    <div class="main_title d-flex justify-content-between">
+        <h2>All Employees</h2>
+    <a href="/">    <button class="btn btn-primary">Create Employee</button></a>
+       </div>
+    <table id="employee-table" class="table">
+        <thead>
+            <tr>
+                <th>Sn.</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Phone No</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="employee-table-body">
+            <!-- Employee rows will be populated here -->
+        </tbody>
+    </table>
+
+    <!-- Modal for Editing Employee -->
+    <div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Employee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-form">
+                        <input type="hidden" name="id" />
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name:</label>
+                            <input type="text" name="name" required class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" name="email" required class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="age" class="form-label">Age:</label>
+                            <input type="number" name="age" required class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="gender" class="form-label">Gender:</label>
+                            <select name="gender" required class="form-select">
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                                <option value="O">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phoneNo" class="form-label">Phone No:</label>
+                            <input type="text" name="phoneNo" required class="form-control" />
+                        </div>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+<script>
+    $(document).ready(function () {
+        fetchEmployees();
+
+        function fetchEmployees() {
+            $.ajax({
+                url: '/api/employees/',
+                type: 'GET',
+                success: function (data) {
+                    $('#employee-table-body').empty();
+                    function gender(gen) {
+                        if (gen === "F") {
+                            return "FEMALE";
+                        } else {
+                            return "MALE";
+                        }
+                    }
+
+                    data.forEach(function (employee) {
+                        $('#employee-table-body').append(`
+                        <tr>
+                            <td>${employee.id}</td>
+                            <td>${employee.name}</td>
+                            <td>${employee.email}</td>
+                            <td>${employee.age}</td>
+            <td>${gender(employee.gender)}</td> <!-- Call the gender function here -->
+                            <td>${employee.phoneNo}</td>
+                            <td>
+                                <button class="btn btn-warning btn-edit" data-id="${employee.id}">Edit</button>
+                                <button class="btn btn-danger btn-delete" data-id="${employee.id}">Delete</button>
+                            </td>
+                        </tr>
+                    `);
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching employees:', error);
+                }
+            });
+        }
+
+        $(document).on('click', '.btn-edit', function () {
+            const employeeId = $(this).data('id');
+            $.ajax({
+                url: `/api/employees/${employeeId}/`,
+                type: 'GET',
+                success: function (employee) {
+                    $('#edit-form [name="id"]').val(employee.id);
+                    $('#edit-form [name="name"]').val(employee.name);
+                    $('#edit-form [name="email"]').val(employee.email);
+                    $('#edit-form [name="age"]').val(employee.age);
+                    $('#edit-form [name="gender"]').val(employee.gender);
+                    $('#edit-form [name="phoneNo"]').val(employee.phoneNo);
+                    $('#edit-modal').modal('show');
+                },
+                error: function (error) {
+                    console.error('Error fetching employee:', error);
+                }
+            });
+        });
+
+        $('#edit-form').on('submit', function (event) {
+            event.preventDefault();
+
+            const employeeId = $('#edit-form [name="id"]').val();
+
+            const updatedData = {
+                name: $('#edit-form [name="name"]').val(),
+                email: $('#edit-form [name="email"]').val(),
+                age: $('#edit-form [name="age"]').val(),
+                gender: $('#edit-form [name="gender"]').val(),
+                phoneNo: $('#edit-form [name="phoneNo"]').val(),
+            };
+
+            $.ajax({
+                url: `/api/employees/${employeeId}/`,
+                type: 'PUT',
+                data: JSON.stringify(updatedData),
+                contentType: 'application/json',
+                success: function () {
+                    fetchEmployees();
+                    $('#edit-modal').modal('hide');
+                    alert('Employee updated successfully!');
+                },
+                error: function (error) {
+                    console.error('Error updating employee:', error);
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-delete', function () {
+            const employeeId = $(this).data('id');
+
+            if (confirm('Are you sure you want to delete this employee?')) {
+                console.log(employeeId);
+
+                $.ajax({
+                    url: `/api/employees/${employeeId}/`,
+                    type: 'DELETE',
+                    success: function () {
+                        fetchEmployees();
+                        alert('Employee deleted successfully!');
+                    },
+                    error: function (error) {
+                        console.error('Error deleting employee:', error);
+                    }
+                });
+            }
+        });
+    });
+
+</script>
+
+</html>
